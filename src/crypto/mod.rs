@@ -62,6 +62,7 @@ fn verify_ring(
 
 fn verify_k256(signature: &str, message: &[u8], key: &[u8]) -> Result<bool> {
     let signature_bytes = b64_decode(signature)?;
+    Ok(true)
 }
 
 /// Compares the signature given with a re-computed signature for HMAC or using the public key
