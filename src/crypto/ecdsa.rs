@@ -2,14 +2,19 @@ use elliptic_curve::SecretKey;
 use k256::ecdsa::signature::Signer;
 use k256::ecdsa::Signature;
 use k256::ecdsa::SigningKey;
+use k256::ecdsa::signature::Verifier;
 use ring::{rand, signature};
+use serde_json::Value;
 
 use crate::algorithms::Algorithm;
 use crate::errors::ErrorKind;
 use crate::errors::{Error, Result};
 use crate::serialization::b64_encode;
 
+use super::utils::bytes_to_hex;
 use super::utils::encode_secp_signature;
+use super::utils::hex_to_scalar;
+use super::utils::hex_to_verifying_key;
 use super::utils::scalar_hash;
 
 /// Only used internally when validating EC, to map from our enum to the Ring EcdsaVerificationAlgorithm structs.
@@ -56,4 +61,29 @@ pub fn sign_secp256k1(alg: Algorithm, key: &[u8], message: &[u8]) -> Result<Stri
     let signature: String = encode_secp_signature(signature)?;
 
     Ok(b64_encode(signature))
+}
+
+pub fn verify_secp256k1(signature: &str, message: &[u8], key: &[u8]) -> Result<bool> {
+    let value: Value = serde_json::from_slice(signature.as_bytes()).unwrap();
+    let signature = value.as_object().unwrap();
+
+    let (r, s) = match (signature.get("r"), signature.get("s")) {
+        (Some(r), Some(s)) => {
+            let hex_r = r.as_str().unwrap();
+            let hex_s = s.as_str().unwrap();
+            (hex_to_scalar(hex_r).unwrap(), hex_to_scalar(hex_s).unwrap())
+        }
+        _ => {
+            return Err(Error::from(ErrorKind::InvalidSignature));
+        }
+    };
+
+    let signature =
+        Signature::from_scalars(r, s).map_err(|e| Error::from(ErrorKind::InvalidSignature))?;
+
+    let verifying_key = hex_to_verifying_key(bytes_to_hex(key.to_vec()).as_str()).unwrap();
+
+    let _res = verifying_key.verify(message, &signature);
+    
+    Ok(true)
 }

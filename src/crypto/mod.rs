@@ -61,8 +61,7 @@ fn verify_ring(
 }
 
 fn verify_k256(signature: &str, message: &[u8], key: &[u8]) -> Result<bool> {
-    let signature_bytes = b64_decode(signature)?;
-    Ok(true)
+    ecdsa::verify_secp256k1(signature, message, key)
 }
 
 /// Compares the signature given with a re-computed signature for HMAC or using the public key
@@ -91,6 +90,9 @@ pub fn verify(
             message,
             key.as_bytes(),
         ),
+
+        Algorithm::Secp256k1 => verify_k256(signature, message, key.as_bytes()),
+
         Algorithm::EdDSA => verify_ring(
             eddsa::alg_to_ec_verification(algorithm),
             signature,

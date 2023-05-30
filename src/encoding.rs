@@ -90,7 +90,7 @@ impl EncodingKey {
     pub fn from_ed_der(der: &[u8]) -> Self {
         EncodingKey { family: AlgorithmFamily::Ed, content: der.to_vec() }
     }
-
+    /// TODO
     pub fn from_secret_scalar(scalar: &[u8]) -> Self {
         EncodingKey { family: AlgorithmFamily::Ec, content: scalar.to_vec() }
     }

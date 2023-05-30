@@ -42,6 +42,7 @@ pub enum Algorithm {
 
     /// Edwards-curve Digital Signature Algorithm (EdDSA)
     EdDSA,
+    /// ED25119
     Secp256k1,
 }
 

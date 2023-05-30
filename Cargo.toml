@@ -22,7 +22,8 @@ pem = {version = "1", optional = true}
 simple_asn1 = {version = "0.6", optional = true}
 elliptic-curve = {version="0.13.0", features=["jwk", "serde"]}
 k256 = {version="0.13.0", features = ["sha256", "ecdsa", "serde", "alloc"], optional = false }
-
+hex = "0.4.3"
+rand = "~0.7.3"
 [dev-dependencies]
 # For the custom time example
 time = "0.3"
