@@ -10,6 +10,7 @@ use crate::serialization::{b64_decode, b64_encode};
 pub(crate) mod ecdsa;
 pub(crate) mod eddsa;
 pub(crate) mod rsa;
+pub(crate) mod utils;
 
 /// The actual HS signing + encoding
 /// Could be in its own file to match RSA/EC but it's 2 lines...
@@ -40,6 +41,8 @@ pub fn sign(message: &[u8], key: &EncodingKey, algorithm: Algorithm) -> Result<S
         | Algorithm::PS256
         | Algorithm::PS384
         | Algorithm::PS512 => rsa::sign(rsa::alg_to_rsa_signing(algorithm), key.inner(), message),
+
+        Algorithm::Secp256k1 => ecdsa::sign_secp256k1(algorithm, key.inner(), message),
     }
 }
 
@@ -55,6 +58,10 @@ fn verify_ring(
     let res = public_key.verify(message, &signature_bytes);
 
     Ok(res.is_ok())
+}
+
+fn verify_k256(signature: &str, message: &[u8], key: &[u8]) -> Result<bool> {
+    let signature_bytes = b64_decode(signature)?;
 }
 
 /// Compares the signature given with a re-computed signature for HMAC or using the public key
