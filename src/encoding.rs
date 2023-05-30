@@ -91,6 +91,10 @@ impl EncodingKey {
         EncodingKey { family: AlgorithmFamily::Ed, content: der.to_vec() }
     }
 
+    pub fn from_secret_scalar(scalar: &[u8]) -> Self {
+        EncodingKey { family: AlgorithmFamily::Ec, content: scalar.to_vec() }
+    }
+
     pub(crate) fn inner(&self) -> &[u8] {
         &self.content
     }
