@@ -42,6 +42,7 @@ pub enum Algorithm {
 
     /// Edwards-curve Digital Signature Algorithm (EdDSA)
     EdDSA,
+    Secp256k1,
 }
 
 impl Default for Algorithm {
@@ -66,6 +67,7 @@ impl FromStr for Algorithm {
             "PS512" => Ok(Algorithm::PS512),
             "RS512" => Ok(Algorithm::RS512),
             "EdDSA" => Ok(Algorithm::EdDSA),
+            "Secp2456k1" => Ok(Algorithm::Secp256k1),
             _ => Err(ErrorKind::InvalidAlgorithmName.into()),
         }
     }
@@ -81,7 +83,7 @@ impl Algorithm {
             | Algorithm::PS256
             | Algorithm::PS384
             | Algorithm::PS512 => AlgorithmFamily::Rsa,
-            Algorithm::ES256 | Algorithm::ES384 => AlgorithmFamily::Ec,
+            Algorithm::ES256 | Algorithm::ES384 | Algorithm::Secp256k1 => AlgorithmFamily::Ec,
             Algorithm::EdDSA => AlgorithmFamily::Ed,
         }
     }
