@@ -20,6 +20,8 @@ base64 = "0.21.0"
 # For PEM decoding
 pem = {version = "1", optional = true}
 simple_asn1 = {version = "0.6", optional = true}
+elliptic-curve = {version="0.13.0", features=["jwk", "serde"]}
+k256 = {version="0.13.0", features = ["sha256", "ecdsa", "serde", "alloc"], optional = false }
 
 [dev-dependencies]
 # For the custom time example
